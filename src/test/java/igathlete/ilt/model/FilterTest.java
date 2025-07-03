@@ -1,4 +1,4 @@
-package com.cocojumbo.demo.model;
+package igathlete.ilt.model;
 
 import org.junit.jupiter.api.Test;
 

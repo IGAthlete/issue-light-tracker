@@ -1,8 +1,8 @@
-package com.cocojumbo.demo.rest;
+package igathlete.ilt.rest;
 
-import com.cocojumbo.demo.model.Catalog;
-import com.cocojumbo.demo.model.Filter;
-import com.cocojumbo.demo.service.CatalogService;
+import igathlete.ilt.model.Catalog;
+import igathlete.ilt.model.Filter;
+import igathlete.ilt.service.CatalogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;

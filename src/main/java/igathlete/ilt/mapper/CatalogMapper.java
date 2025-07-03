@@ -1,7 +1,7 @@
-package com.cocojumbo.demo.mapper;
+package igathlete.ilt.mapper;
 
-import com.cocojumbo.demo.model.Catalog;
-import com.cocojumbo.demo.model.Filter;
+import igathlete.ilt.model.Catalog;
+import igathlete.ilt.model.Filter;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

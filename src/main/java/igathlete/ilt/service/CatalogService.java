@@ -1,8 +1,8 @@
-package com.cocojumbo.demo.service;
+package igathlete.ilt.service;
 
-import com.cocojumbo.demo.mapper.CatalogMapper;
-import com.cocojumbo.demo.model.Catalog;
-import com.cocojumbo.demo.model.Filter;
+import igathlete.ilt.mapper.CatalogMapper;
+import igathlete.ilt.model.Catalog;
+import igathlete.ilt.model.Filter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

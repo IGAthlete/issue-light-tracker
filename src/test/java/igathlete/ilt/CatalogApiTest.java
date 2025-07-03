@@ -1,6 +1,6 @@
-package com.cocojumbo.demo;
+package igathlete.ilt;
 
-import com.cocojumbo.demo.model.Catalog;
+import igathlete.ilt.model.Catalog;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
