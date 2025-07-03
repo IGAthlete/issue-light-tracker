@@ -10,7 +10,7 @@ services:
     depends_on:
       - ilt_db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ilt_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://ilt_db:5432/ilt_db
       SPRING_DATASOURCE_USERNAME: ilt_user
       SPRING_DATASOURCE_PASSWORD: ilt_password
     ports:

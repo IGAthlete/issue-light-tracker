@@ -44,10 +44,10 @@
                 </foreach>
             </if>
             <if test="filter.name != null and filter.name != ''">
-                AND name LIKE CONCAT('%', #{filter.name}, '%')
+                AND LOWER(name) LIKE CONCAT('%', LOWER(#{filter.name}), '%')
             </if>
             <if test="filter.description != null and filter.description != ''">
-                AND description LIKE CONCAT('%', #{filter.description}, '%')
+                AND LOWER(description) LIKE CONCAT('%', LOWER(#{filter.description}), '%')
             </if>
             <if test="filter.city != null and filter.city != ''">
                 AND city LIKE CONCAT('%', #{filter.city}, '%')

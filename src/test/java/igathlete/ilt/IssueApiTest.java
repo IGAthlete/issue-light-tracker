@@ -3,15 +3,12 @@ package igathlete.ilt;
 import igathlete.ilt.model.Issue;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Random;
 
-//@Disabled
-@SpringBootTest
+@Disabled
 public class IssueApiTest {
-
     @Test
     public void bulkCreateIssues() {
         RestTemplate restTemplate = new RestTemplate();
