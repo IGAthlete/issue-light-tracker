@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: issue_light_tracker
+    depends_on:
+      - ilt_db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ilt_db
+      SPRING_DATASOURCE_USERNAME: ilt_user
+      SPRING_DATASOURCE_PASSWORD: ilt_password
+    ports:
+      - "9090:9090"
+    networks:
+      - ilt_net
+
+  ilt_db:
+    image: postgres:15
+    container_name: ilt_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ilt_db
+      POSTGRES_USER: ilt_user
+      POSTGRES_PASSWORD: ilt_password
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - ilt_net
+
+networks:
+  ilt_net:
+    driver: bridge

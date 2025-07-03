@@ -13,4 +13,5 @@ public class Filter {
     private List<Long> ids;
     private String name;
     private String description;
+    private String city;
 }

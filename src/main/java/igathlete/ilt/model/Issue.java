@@ -7,8 +7,9 @@ import lombok.NoArgsConstructor;
 @Data               // Generates getters, setters, toString, equals, hashCode
 @NoArgsConstructor  // Generates no-arg constructor
 @AllArgsConstructor // Generates all-args constructor
-public class Catalog {
+public class Issue {
     private Long id;
     private String name;
     private String description;
+    private String city;
 }

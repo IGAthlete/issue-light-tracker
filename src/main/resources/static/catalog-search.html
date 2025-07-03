@@ -22,6 +22,9 @@
     <label for="description">Description</label>
     <input type="text" id="description" placeholder="Description filter" />
 
+    <label for="city">City</label>
+    <input type="text" id="city" placeholder="City filter" />
+
     <button type="submit">Search</button>
 </form>
 
@@ -30,47 +33,48 @@
 
 <script>
     window.onload = function () {
-      document.getElementById('searchForm').addEventListener('submit', async function (e) {
-        e.preventDefault();
+        document.getElementById('searchForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
 
-        const ids = document.getElementById('ids').value
-          .split(',')
-          .map(s => s.trim())
-          .filter(s => s.length > 0)
-          .map(Number);
+            const ids = document.getElementById('ids').value
+                .split(',')
+                .map(s => s.trim())
+                .filter(s => s.length > 0)
+                .map(Number);
 
-        const payload = {
-          ids: ids.length ? ids : null,
-          name: document.getElementById('name').value || null,
-          description: document.getElementById('description').value || null
-        };
+            const payload = {
+                ids: ids.length ? ids : null,
+                name: document.getElementById('name').value || null,
+                description: document.getElementById('description').value || null,
+                city: document.getElementById('city').value || null
+            };
 
-        try {
-          const response = await fetch('/catalogs/search', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-          });
+            try {
+                const response = await fetch('/catalogs/search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
 
-          if (!response.ok) {
-            throw new Error('Server returned ' + response.status);
-          }
+                if (!response.ok) {
+                    throw new Error('Server returned ' + response.status);
+                }
 
-          const data = await response.json();
-          const resultList = document.getElementById('results');
-          resultList.innerHTML = '';
+                const data = await response.json();
+                const resultList = document.getElementById('results');
+                resultList.innerHTML = '';
 
-          data.forEach(item => {
-            const li = document.createElement('li');
-            li.textContent = `ID: ${item.id} | Name: ${item.name} | Description: ${item.description}`;
-            resultList.appendChild(li);
-          });
-        } catch (error) {
-          alert('Error: ' + error.message);
-        }
-      });
+                data.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = `ID: ${item.id} | Name: ${item.name} | Description: ${item.description} | City: ${item.city}`;
+                    resultList.appendChild(li);
+                });
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        });
     };
 </script>
 </body>

@@ -5,9 +5,9 @@ spring:
   application.name: issue-light-tracker
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/ilt_db
-    username: postgres
-    password: 12345
+    url: jdbc:postgresql://localhost:5433/ilt_db
+    username: ilt_user
+    password: ilt_password
     driver-class-name: org.postgresql.Driver
 
 mybatis:

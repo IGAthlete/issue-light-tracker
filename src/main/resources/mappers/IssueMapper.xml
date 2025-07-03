@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="igathlete.ilt.mapper.IssueMapper">
+
+    <select id="findAll" resultType="igathlete.ilt.model.Issue">
+        SELECT id, name, description, city
+        FROM issues
+    </select>
+
+    <select id="findById" parameterType="long" resultType="igathlete.ilt.model.Issue">
+        SELECT id, name, description, city
+        FROM issues
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="igathlete.ilt.model.Issue" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO issues (name, description, city)
+        VALUES (#{name}, #{description}, #{city})
+    </insert>
+
+    <update id="update" parameterType="map">
+        UPDATE issues
+        SET name = #{issue.name},
+        description = #{issue.description},
+        city = #{issue.city}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM issues WHERE id = #{id}
+    </delete>
+
+    <select id="search" resultType="igathlete.ilt.model.Issue">
+        SELECT id, name, description, city
+        FROM issues
+        <where>
+            <if test="filter.ids != null and !filter.ids.isEmpty()">
+                AND id IN
+                <foreach collection="filter.ids" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="filter.name != null and filter.name != ''">
+                AND name LIKE CONCAT('%', #{filter.name}, '%')
+            </if>
+            <if test="filter.description != null and filter.description != ''">
+                AND description LIKE CONCAT('%', #{filter.description}, '%')
+            </if>
+            <if test="filter.city != null and filter.city != ''">
+                AND city LIKE CONCAT('%', #{filter.city}, '%')
+            </if>
+        </where>
+    </select>
+
+</mapper>

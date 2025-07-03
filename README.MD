@@ -1,6 +1,6 @@
 # [issue-light-tracker]
 
 ## 🚀 Overview
-//TODO 
+//TODO
 
-chat gpt context - https://chatgpt.com/c/6856560d-ac88-8007-b859-964ec3756df5
+chat gpt context - https://chatgpt.com/c/6866c5a9-ea28-8003-af16-7eab27ffe4e1
