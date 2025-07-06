@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Issue Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        textarea { resize: vertical; }
+        .card:hover { box-shadow: 0 0 12px rgba(0, 0, 0, 0.2); cursor: pointer; }
+        .card-footer { text-align: right; }
+        #bulkDeleteBtn { display: none; }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container py-5">
+    <h1 class="mb-4 text-primary">Issue Management</h1>
+
+    <!-- Buttons -->
+    <div class="mb-4">
+        <button class="btn btn-outline-primary me-2" onclick="showSection('searchSection')">🔍 Search</button>
+        <button class="btn btn-outline-success me-2" onclick="showSection('createSection')">➕ Create</button>
+        <button class="btn btn-outline-warning me-2" onclick="showSection('updateSection')">✏️ Update</button>
+        <!-- Removed Delete Section button -->
+    </div>
+
+    <!-- Search Section -->
+    <div id="searchSection" class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            🔍 Search Issues
+            <button id="bulkDeleteBtn" class="btn btn-danger btn-sm" onclick="bulkDelete()">🗑️ Delete Selected</button>
+        </div>
+        <div class="card-body">
+            <form id="searchForm">
+                <div class="row g-3">
+                    <div class="col-md-3"><input type="text" id="ids" class="form-control" placeholder="IDs (comma separated)"></div>
+                    <div class="col-md-3"><input type="text" id="name" class="form-control" placeholder="Name"></div>
+                    <div class="col-md-3"><input type="text" id="description" class="form-control" placeholder="Description"></div>
+                    <div class="col-md-3"><select id="city" class="form-select"><option value="">Select City</option></select></div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Section -->
+    <div id="createSection" class="card mb-4 d-none">
+        <div class="card-header">➕ Create Issue</div>
+        <div class="card-body">
+            <form id="createForm">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6"><input type="text" id="createName" class="form-control" placeholder="Name" required></div>
+                    <div class="col-md-6"><select id="createCity" class="form-select" required><option value="">Select City</option></select></div>
+                </div>
+                <div class="mb-3"><textarea id="createDescription" class="form-control" rows="10" placeholder="Description"></textarea></div>
+                <button type="submit" class="btn btn-success">Create</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Update Section -->
+    <div id="updateSection" class="card mb-4 d-none">
+        <div class="card-header">✏️ Update Issue</div>
+        <div class="card-body">
+            <form id="updateForm">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-2"><input type="number" id="updateId" class="form-control" placeholder="ID" readonly></div>
+                    <div class="col-md-5"><input type="text" id="updateName" class="form-control" placeholder="Name" required></div>
+                    <div class="col-md-5"><select id="updateCity" class="form-select" required><option value="">Select City</option></select></div>
+                </div>
+                <div class="mb-3"><textarea id="updateDescription" class="form-control" rows="10" placeholder="Description"></textarea></div>
+                <button type="submit" class="btn btn-warning">Update</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Removed Delete Section -->
+
+    <!-- Results -->
+    <div class="card">
+        <div class="card-header">📋 Search Results</div>
+        <div class="card-body">
+            <div class="row" id="results"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const apiBase = '/issues';
+    const cities = ['New York', 'London', 'Berlin', 'Paris', 'Tokyo'];
+
+    function populateCityOptions(selectId) {
+        const select = document.getElementById(selectId);
+        select.innerHTML = '<option value="">Select City</option>';
+        cities.forEach(city => {
+            const option = document.createElement('option');
+            option.value = city;
+            option.textContent = city;
+            select.appendChild(option);
+        });
+    }
+
+    function showSection(idToShow) {
+        ['searchSection', 'createSection', 'updateSection'].forEach(id =>
+            document.getElementById(id).classList.add('d-none')
+        );
+        document.getElementById(idToShow).classList.remove('d-none');
+        // Hide bulk delete button on section change
+        document.getElementById('bulkDeleteBtn').style.display = 'none';
+    }
+
+    async function loadIssueToUpdate(id) {
+        try {
+            const response = await fetch(`${apiBase}/${id}`);
+            if (!response.ok) throw new Error('Issue not found');
+
+            const issue = await response.json();
+            document.getElementById('updateId').value = issue.id;
+            document.getElementById('updateName').value = issue.name || '';
+            document.getElementById('updateCity').value = issue.city || '';
+            document.getElementById('updateDescription').value = issue.description || '';
+            showSection('updateSection');
+        } catch (err) {
+            alert('Could not load issue: ' + err.message);
+        }
+    }
+
+    window.onload = () => {
+        populateCityOptions('city');
+        populateCityOptions('createCity');
+        populateCityOptions('updateCity');
+    };
+
+    // Track checkbox changes to toggle bulk delete button
+    function toggleBulkDeleteBtn() {
+        const checkboxes = document.querySelectorAll('.issue-checkbox');
+        const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+        const anyChecked = Array.from(checkboxes).some(chk => chk.checked);
+        bulkDeleteBtn.style.display = anyChecked ? 'inline-block' : 'none';
+    }
+
+    document.getElementById('searchForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const ids = document.getElementById('ids').value
+            .split(',').map(s => s.trim()).filter(Boolean).map(Number);
+
+        const payload = {
+            ids: ids.length ? ids : null,
+            name: document.getElementById('name').value || null,
+            description: document.getElementById('description').value || null,
+            city: document.getElementById('city').value || null
+        };
+
+        try {
+            const res = await fetch(`${apiBase}/search`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+            const results = document.getElementById('results');
+            results.innerHTML = '';
+
+            if (!data.length) {
+                results.innerHTML = '<p class="text-muted">No issues found.</p>';
+                document.getElementById('bulkDeleteBtn').style.display = 'none';
+                return;
+            }
+
+            data.forEach(issue => {
+                const isLong = issue.description && (issue.description.length > 80 || issue.description.includes('\n'));
+                const colClass = isLong ? 'col-12' : 'col-md-4';
+                const col = document.createElement('div');
+                col.className = `${colClass} mb-4`;
+
+                col.innerHTML =
+                    `<div class="card h-100 border-info">
+                        <div class="card-body d-flex align-items-start">
+                            <input type="checkbox" class="issue-checkbox me-3" data-id="${issue.id}">
+                            <div>
+                                <h5 class="card-title text-info mb-1" style="cursor:pointer;" onclick="loadIssueToUpdate(${issue.id})">
+                                    #${issue.id} - ${issue.name}
+                                </h5>
+                                <p class="card-text mb-0">
+                                    ${(issue.description || '<em>None</em>').replace(/\n/g, '<br>')}<br>
+                                    <strong>Город:</strong> ${issue.city || '<em>Unknown</em>'}
+                                </p>
+                            </div>
+                        </div>
+                    </div>`;
+
+                results.appendChild(col);
+            });
+
+            // Add event listeners to checkboxes
+            document.querySelectorAll('.issue-checkbox').forEach(chk => {
+                chk.addEventListener('change', toggleBulkDeleteBtn);
+            });
+
+            // Hide delete button initially
+            document.getElementById('bulkDeleteBtn').style.display = 'none';
+
+        } catch (err) {
+            alert('Search failed: ' + err.message);
+        }
+    });
+
+    async function bulkDelete() {
+        const checkboxes = document.querySelectorAll('.issue-checkbox:checked');
+        if (checkboxes.length === 0) return;
+
+        if (!confirm(`Are you sure you want to delete ${checkboxes.length} selected issue(s)?`)) return;
+
+        try {
+            // Use Promise.all to delete all selected issues concurrently
+            const deletePromises = Array.from(checkboxes).map(chk =>
+                fetch(`${apiBase}/${chk.dataset.id}`, { method: 'DELETE' })
+            );
+            const results = await Promise.all(deletePromises);
+
+            // Check if any deletion failed
+            for (const res of results) {
+                if (!res.ok) throw new Error('Some deletions failed');
+            }
+
+            alert('Selected issues deleted!');
+            // Trigger search again to refresh results and hide delete button
+            document.getElementById('searchForm').dispatchEvent(new Event('submit'));
+        } catch (err) {
+            alert('Error during deletion: ' + err.message);
+        }
+    }
+
+    document.getElementById('createForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const issue = {
+            name: document.getElementById('createName').value,
+            description: document.getElementById('createDescription').value,
+            city: document.getElementById('createCity').value
+        };
+
+        try {
+            const res = await fetch(apiBase, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(issue)
+            });
+
+            if (!res.ok) throw new Error('Failed to create');
+            alert('Issue created!');
+            this.reset();
+        } catch (err) {
+            alert('Error: ' + err.message);
+        }
+    });
+
+    document.getElementById('updateForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const id = document.getElementById('updateId').value;
+        const issue = {
+            name: document.getElementById('updateName').value,
+            description: document.getElementById('updateDescription').value,
+            city: document.getElementById('updateCity').value
+        };
+
+        try {
+            const res = await fetch(`${apiBase}/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(issue)
+            });
+
+            if (!res.ok) throw new Error('Update failed');
+            alert('Issue updated!');
+        } catch (err) {
+            alert('Error: ' + err.message);
+        }
+    });
+</script>
+</body>
+</html>
