@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(
         info = @Info(
-                title = "Catalog API",
+                title = "Issue API",
                 version = "1.0",
-                description = "REST API for managing product catalogs"
+                description = "REST API for managing issues"
         )
 )
 public class OpenApiConfig {}

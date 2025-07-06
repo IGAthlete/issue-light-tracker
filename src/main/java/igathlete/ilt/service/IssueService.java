@@ -3,10 +3,12 @@ package igathlete.ilt.service;
 import igathlete.ilt.mapper.IssueMapper;
 import igathlete.ilt.model.Issue;
 import igathlete.ilt.model.Filter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class IssueService {
     private final IssueMapper issueMapper;
@@ -36,6 +38,7 @@ public class IssueService {
     }
 
     public List<Issue> search(Filter filter) {
+        log.info("search by filter {}", filter);
         return issueMapper.search(filter);
     }
 }
