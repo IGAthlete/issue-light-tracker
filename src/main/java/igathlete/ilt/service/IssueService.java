@@ -38,7 +38,7 @@ public class IssueService {
     }
 
     public List<Issue> search(Filter filter) {
-        log.info("search by filter {}", filter);
+        log.info("Search by filter {}", filter);
         return issueMapper.search(filter);
     }
 }
