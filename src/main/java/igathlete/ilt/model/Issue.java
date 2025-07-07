@@ -12,4 +12,5 @@ public class Issue {
     private String name;
     private String description;
     private String city;
+    private java.time.LocalDateTime createdAt;
 }
