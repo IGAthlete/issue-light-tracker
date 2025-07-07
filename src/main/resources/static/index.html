@@ -37,7 +37,18 @@
                     <div class="col-md-3"><input type="text" id="description" class="form-control" placeholder="Description"></div>
                     <div class="col-md-3"><select id="city" class="form-select"><option value="">Select City</option></select></div>
                 </div>
+                <div class="row g-3 mt-2">
+                    <div class="col-md-3">
+                        <label for="fromTimestamp" class="form-label">From Date</label>
+                        <input type="datetime-local" id="fromTimestamp" class="form-control" placeholder="From date">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="toTimestamp" class="form-label">To Date</label>
+                        <input type="datetime-local" id="toTimestamp" class="form-control" placeholder="To date">
+                    </div>
+                </div>
                 <button type="submit" class="btn btn-primary mt-3">Search</button>
+                <button type="button" class="btn btn-secondary mt-3 ms-2" id="resetSearchBtn">Reset</button>
             </form>
         </div>
     </div>
@@ -143,11 +154,16 @@
         const ids = document.getElementById('ids').value
             .split(',').map(s => s.trim()).filter(Boolean).map(Number);
 
+        const fromTimestamp = document.getElementById('fromTimestamp').value || null;
+        const toTimestamp = document.getElementById('toTimestamp').value || null;
+
         const payload = {
             ids: ids.length ? ids : null,
             name: document.getElementById('name').value || null,
             description: document.getElementById('description').value || null,
-            city: document.getElementById('city').value || null
+            city: document.getElementById('city').value || null,
+            fromTimestamp,
+            toTimestamp
         };
 
         try {
@@ -184,6 +200,7 @@
                                 <p class="card-text mb-0">
                                     ${(issue.description || '<em>None</em>').replace(/\n/g, '<br>')}<br>
                                     <strong>Город:</strong> ${issue.city || '<em>Unknown</em>'}
+                                    <br><strong>Дата:</strong> <span class="created-at" data-created-at="${issue.createdAt || ''}"></span>
                                 </p>
                             </div>
                         </div>
@@ -200,9 +217,29 @@
             // Hide delete button initially
             document.getElementById('bulkDeleteBtn').style.display = 'none';
 
+            // Format and display createdAt timestamps in local time
+            document.querySelectorAll('.created-at').forEach(span => {
+                const iso = span.getAttribute('data-created-at');
+                if (iso) {
+                    const dt = new Date(iso);
+                    span.textContent = dt.toLocaleString();
+                } else {
+                    span.textContent = '-';
+                }
+            });
+
         } catch (err) {
             alert('Search failed: ' + err.message);
         }
+    });
+
+    document.getElementById('resetSearchBtn').addEventListener('click', function () {
+        document.getElementById('ids').value = '';
+        document.getElementById('name').value = '';
+        document.getElementById('description').value = '';
+        document.getElementById('city').selectedIndex = 0;
+        document.getElementById('fromTimestamp').value = '';
+        document.getElementById('toTimestamp').value = '';
     });
 
     async function bulkDelete() {

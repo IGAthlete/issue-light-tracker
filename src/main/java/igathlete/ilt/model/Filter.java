@@ -14,4 +14,6 @@ public class Filter {
     private String name;
     private String description;
     private String city;
+    private java.time.LocalDateTime fromTimestamp;
+    private java.time.LocalDateTime toTimestamp;
 }

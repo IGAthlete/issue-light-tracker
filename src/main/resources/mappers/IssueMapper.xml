@@ -6,12 +6,12 @@
 <mapper namespace="igathlete.ilt.mapper.IssueMapper">
 
     <select id="findAll" resultType="igathlete.ilt.model.Issue">
-        SELECT id, name, description, city
+        SELECT id, name, description, city, created_at as createdAt
         FROM issues
     </select>
 
     <select id="findById" parameterType="long" resultType="igathlete.ilt.model.Issue">
-        SELECT id, name, description, city
+        SELECT id, name, description, city, created_at as createdAt
         FROM issues
         WHERE id = #{id}
     </select>
@@ -34,7 +34,7 @@
     </delete>
 
     <select id="search" resultType="igathlete.ilt.model.Issue">
-        SELECT id, name, description, city
+        SELECT id, name, description, city, created_at as createdAt
         FROM issues
         <where>
             <if test="filter.ids != null and !filter.ids.isEmpty()">
@@ -51,6 +51,12 @@
             </if>
             <if test="filter.city != null and filter.city != ''">
                 AND city LIKE CONCAT('%', #{filter.city}, '%')
+            </if>
+            <if test="filter.fromTimestamp != null">
+                AND created_at &gt;= #{filter.fromTimestamp}
+            </if>
+            <if test="filter.toTimestamp != null">
+                AND created_at &lt;= #{filter.toTimestamp}
             </if>
         </where>
     </select>
